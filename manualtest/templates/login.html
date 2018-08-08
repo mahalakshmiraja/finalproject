@@ -1,0 +1,15 @@
+{% block body %}
+<div class="jumbotron">
+<h1>Welcome to Test Organizer </h1>
+
+<h4> Please Login </h4>
+<form action="{% url 'login' %}" method="post">
+    {% csrf_token %}
+    <input name="username" type="text" placeholder="Enter Username"/><br>
+    <input name="password" type="password"  placeholder="Type your password"/>
+    <input type="submit" value="Login"/>
+</form>
+
+<a href="{% url 'newuser' %}">New User? Click here</a>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+<h3>New User</h3>
+
+<h5>Please register below</h5>
+<form action="{% url 'newuser' %}" method="post">
+    {% csrf_token %}
+    <input name="usernme" type="text" placeholder="Enter display name" required /><br>
+    <input name="passwrd" type="password" placeholder="Type your password" required /><br>
+    <input name="firstname" type="text" placeholder="Enter first name" required/><br>
+    <input name="lastname" type="text" placeholder="Enter last name" required/><br>
+    <input name="email" type="text" placeholder="Enter email address" required/><br>
+    <input type="submit" value="Register"/>
+</form>
+{% endblock %}

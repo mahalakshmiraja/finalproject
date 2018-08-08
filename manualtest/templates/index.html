@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Organize Your Test{% endblock %}
+
+{% block body %}
+    <h3>Record your new test case</h3>
+    <div class="container-fluid">
+      <div class="row">
+
+        <div class="col-md-6" style="background-color:lavenderblush;">
+            <div>
+                <p id=myCalendar> </p><br>
+                <p id=myTime> </p><br>
+            </div>
+
+            <form action="{% url 'index' %}" method="post">
+                {% csrf_token %}
+                <input name="product" type="text" placeholder="Enter product name" required/><br>
+                <input type="submit" value="Create Product"/>
+            </form>
+            {{ message }}
+         </div>
+        <div class="col-md-6" style="background-color:lavenderblush;">
+            <h5>List of Products:</h5>
+            {% for i in product %}
+                <form id = "{{ i.id }}">{% csrf_token %}
+                    <a id="mySelect" href="{% url 'testcase' i.id %}" value="{{ i.id }}" name="testcaseTable" class="list-group-item list-group-item-action">{{ i.product }}</a>
+                </form>
+                <!--<input type="hidden" value="{{ i.id }}" >-->
+            {% endfor %}
+
+         </div>
+        </div>
+    </div>
+
+{% endblock %}

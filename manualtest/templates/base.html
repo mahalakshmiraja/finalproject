@@ -1,0 +1,33 @@
+  <html>
+      <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+        <script type="text/javascript" src="/static/index.js"></script>
+        <title>{% block title %} {% endblock %}</title>
+
+      </head>
+
+      <body>
+        <div class = "jumbotron">
+        <h1> Welcome to "Organize Your Test" </h1>
+    </div>
+    {% if user != None and user.username != None %}
+    <div>
+       <h3>Hello, {{user.username }}</h3>
+    <ul>
+        <li>Currently logged in as: {{ user.username }}</li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+
+    </ul>
+
+    </div>
+    {% endif %}")
+
+          {% block body %}
+
+          {% endblock %}
+      </body>
+  </html>
