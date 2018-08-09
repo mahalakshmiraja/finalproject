@@ -13,6 +13,7 @@
             <form action="{% url 'testcase' product.id %}" method="post">
                 {% csrf_token %}
                 <input name="testcase" type="text" placeholder="Enter Test Case Name" required/><br>
+                 <textarea name="teststep" rows="10" cols="50" placeholder="Enter Test Steps"></textarea><br>
                 <input type="submit" value="Create TestCase"/>
             </form>
         </div>
@@ -20,7 +21,7 @@
             <h5>List of TestCases to Run:</h5>
             {% for i in testcases %}
                 <form id = "{{ i.id }}">{% csrf_token %}
-                    <a id="mySelect" href="{% url 'testrun' %}" value="{{ i.id }}" name="testcaseTable" class="list-group-item list-group-item-action">{{ i.testcase }}</a>
+                    <a id="mySelect" href="{% url 'testrun' i.id %}" value="{{ i.id }}" name="testcaseTable" class="list-group-item list-group-item-action">{{ i.testcase }}</a>
                 </form>
             {% endfor %}
          </div>

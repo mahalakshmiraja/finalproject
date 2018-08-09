@@ -14,7 +14,7 @@
         <div class = "jumbotron">
         <h1> Welcome to "Organize Your Test" </h1>
     </div>
-    {% if user != None and user.username != None %}
+    {% if user.password != None and user.username != None %}
     <div>
        <h3>Hello, {{user.username }}</h3>
     <ul>
@@ -24,7 +24,7 @@
     </ul>
 
     </div>
-    {% endif %}")
+    {% endif %}
 
           {% block body %}
 

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Organize Your Test{% endblock %}
+
+{% block body %}
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6" style="background-color:lavenderblush;">
+            <p id=myCalendar> </p><br>
+            <p id=myTime> </p><br>
+            <p>{{message}}</p>
+            <h5>Click to get test report:</h5>
+            <form action="{% url 'report' testcasename.id %}" method="post">
+                {% csrf_token %}
+                <a name="report" href="{% url 'report' %}"><button>Generate Report</button></a>
+            </form>
+        </div>
+        <div class="col-md-6" style="background-color:lavenderblush;">
+
+            <!--{% for i in testrun %}-->
+            <!--    <form id = "{{ i.id }}">{% csrf_token %}-->
+            <!--        <a id="mySelect" href="{% url 'index' %}" value="{{ i.id }}" name="testcaseTable" class="list-group-item list-group-item-action">Test result: {{ i.result}}; Observation: {{i.observation}} </a>-->
+            <!--    </form>-->
+            <!--{% endfor %}-->
+         </div>
+        </div>
+    </div>
+
+{% endblock %}

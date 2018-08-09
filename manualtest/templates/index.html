@@ -26,7 +26,7 @@
                 <form id = "{{ i.id }}">{% csrf_token %}
                     <a id="mySelect" href="{% url 'testcase' i.id %}" value="{{ i.id }}" name="testcaseTable" class="list-group-item list-group-item-action">{{ i.product }}</a>
                 </form>
-                <!--<input type="hidden" value="{{ i.id }}" >-->
+
             {% endfor %}
 
          </div>

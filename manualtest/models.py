@@ -4,6 +4,7 @@ from django.db import models
 
 class ProductName(models.Model):
     product = models.CharField(max_length=64)
+    user =  models.CharField(max_length=64)
 
     def __str__(self):
         return f"{self.id} {self.product}"
@@ -19,7 +20,7 @@ class ProductTestCase(models.Model):
 class TestRun(models.Model):
     result = models.CharField(max_length=64)
     observation = models.CharField(max_length=64)
-    testcasemapper =  models.ForeignKey(ProductTestCase, on_delete=models.CASCADE)
-
+    testcasemapper = models.ForeignKey(ProductTestCase, on_delete=models.CASCADE)
+    date = models.CharField(max_length=64)
     def __str__(self):
-        return f"{self.feature} belongs to product name {self.testcasemapper.product.product}"
+        return f"Product name {self.testcasemapper} has testcase {self.testcasemapper.testcase} with result {self.result}"

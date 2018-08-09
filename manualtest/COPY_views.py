@@ -8,8 +8,7 @@ from django.http import JsonResponse
 from django.contrib.auth.hashers import make_password
 from .models import ProductName, ProductTestCase, TestRun
 from django.contrib import messages
-import datetime
-import xlwt
+
 
 
 # Create your views here.
@@ -17,7 +16,6 @@ def index(request):
     print ("index!!!")
     if not request.user.is_authenticated:
         return render(request, "login.html", {"message" : "Invalid credentials"})
-
 
     if request.method == 'GET':
         print ("get!!!")
@@ -106,11 +104,6 @@ def testCase_view(request, productId):
     print("testCase_view")
     product = ProductName.objects.get(id=productId)
     print (product)
-    userName = request.user.username
-    print(userName)
-    userProduct = ProductName(id = productId, product = product.product, user=userName)
-    userProduct.save()
-
     if request.method == 'GET':
         print ("Get testcases for product: " + product.product + " productId: " + str(productId))
         context = {
@@ -122,9 +115,7 @@ def testCase_view(request, productId):
 
     if request.method == 'POST':
         testcase = request.POST["testcase"]
-        teststep = request.POST["teststep"]
         print ("Trying to create new testcase: " + testcase)
-        print ("Trying to ADD teststeps to the testcase: " + testcase)
 
         currentProductTestcase = ProductTestCase.objects.filter(product=product)
         print ("len(currentProductTestcase) = " + str(len(currentProductTestcase)))
@@ -136,12 +127,11 @@ def testCase_view(request, productId):
                         "user": request.user,
                         "testcases": currentProductTestcase,
                         "product": product,
-
                         "message": testcase + " already associated with product"
                         }
                     return render(request, "testcase.html", context)
 
-        newtestcase = ProductTestCase(testcase=testcase, product=product)
+        newtestcase = TestCase(testcase=testcase, product=product)
         print(newtestcase)
         newtestcase.save()
         context = {
@@ -154,102 +144,44 @@ def testCase_view(request, productId):
 
 
 
-def testrun_view(request, productTestcaseId):
+def testrun_view(request):
     print("testrun_view")
-    testcasename = ProductTestCase.objects.get(id=productTestcaseId)
-    product = ProductName.objects.get(id=testcasename.product.id)
-    print (testcasename)
+    product = ProductName.objects.get(id=productId)
+    print (product)
     if request.method == 'GET':
-        print ("Get teststep for testcases/product: " + str(testcasename.id) + " productId: " + str(productTestcaseId))
+        print ("Get testcases for product: " + product.product + " productId: " + str(productId))
         context = {
             "user": request.user,
-            "testrun": TestRun.objects.filter(testcasemapper=testcasename),
-             "product": product,
-             "testcasename": testcasename
+            "testcases": ProductTestCase.objects.filter(product=product),
+            "product": product
         }
-
-        return render(request, "testrun.html", context)
+        return render(request, "testcase.html", context)
 
     if request.method == 'POST':
-        testresult = request.POST["testresult"]
-        observation = request.POST["observation"]
-        print ("Trying to record result: " + testresult + observation)
+        testcase = request.POST["testcase"]
+        print ("Trying to create new testcase: " + testcase)
 
-        currentProductTestresult = TestRun.objects.filter(testcasemapper=testcasename)
-        print ("len(currentProductTestcase) = " + str(len(currentProductTestresult)))
+        currentProductTestcase = ProductTestCase.objects.filter(product=product)
+        print ("len(currentProductTestcase) = " + str(len(currentProductTestcase)))
+        if len(currentProductTestcase) > 0:
+            for i in range(0,len(currentProductTestcase)):
+                print (currentProductTestcase[i])
+                if currentProductTestcase[i].testcase == testcase:
+                    context = {
+                        "user": request.user,
+                        "testcases": currentProductTestcase,
+                        "product": product,
+                        "message": testcase + " already associated with product"
+                        }
+                    return render(request, "testcase.html", context)
 
-        today = str(datetime.datetime.now())
-
-        newtestresult = TestRun(result=testresult, observation=observation, testcasemapper=testcasename, date=today)
-        print(newtestresult)
-        newtestresult.save()
-
+        newtestcase = TestCase(testcase=testcase, product=product)
+        print(newtestcase)
+        newtestcase.save()
         context = {
             "user": request.user,
-            "testrun": TestRun.objects.filter(testcasemapper=testcasename),
-            "testcasename": testcasename,
-             "product": product,
-            "message": testcasename.testcase + ". Run result at " + today + " = " +  newtestresult.result
+            "testcases": ProductTestCase.objects.filter(product=product),
+            "product": product,
+            "message": testcase + " added to product: " + product.product
             }
-        return render(request, "testrun.html", context)
-
-
-def report_view(request, productId):
-    print("report view")
-    response = HttpResponse(content_type='application/ms-excel')
-    print(response)
-    response['Content-Disposition'] = 'attachment; filename="report.xls"'
-    print(response)
-    product = ProductName.objects.get(id=productId)
-    print(product)
-    wb = xlwt.Workbook(encoding='utf-8')
-    ws = wb.add_sheet('report')
-
-    # Sheet header, first row
-    row_num = 0
-
-    font_style = xlwt.XFStyle()
-    font_style.font.bold = True
-
-    columns = ['Product', 'TestCase', 'Test Results', 'Date&Time' ]
-
-    for col_num in range(len(columns)):
-        ws.write(row_num, col_num, columns[col_num], font_style)
-
-    # Sheet body, remaining rows
-    font_style = xlwt.XFStyle()
-
-    # testcasename = ProductTestCase.objects.get(id=productTestcaseId)
-    # print (testcasename)
-
-    usr = request.user
-    print(usr)
-
-    testResults = []
-    testcases = ProductTestCase.objects.filter(product=product)
-    print(testcases)
-    for testcase in testcases:
-        testResults.extend(TestRun.objects.filter(testcasemapper=testcase))
-    print(testResults)
-
-    row_num = 1
-    for testResult in testResults:
-        for col_num in range(4):
-            data = ""
-            if col_num == 0:
-                data = product.product
-            if col_num == 1:
-                data = testResult.testcasemapper.testcase
-            if col_num == 2:
-                data = testResult.result
-            if col_num == 3:
-                data = testResult.date
-            ws.write(row_num, col_num, data, font_style)
-        row_num += 1
-
-    wb.save(response)
-    return response
-
-
-# def travis_view(request):
-#     requests.get("https://api.darksky.net/forecast/54184c3c3683185042f952fa3414f747/" +
+        return render(request, "testcase.html", context)
